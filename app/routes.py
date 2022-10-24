@@ -1,4 +1,4 @@
-from flask import Blueprint, jsonify
+from flask import Blueprint, jsonify, abort, make_response
 
 # 1. Define a `Planet` class with the attributes `id`, `name`, and `description`, and one additional attribute
 # 1. Create a list of `Planet` instances
@@ -19,13 +19,28 @@ planets_bp = Blueprint('planets_bp', __name__, url_prefix='/planets')
 
 @planets_bp.route('', methods=['GET'])
 def get_all_planets():
-    planet_response = []
-    for planet in PLANETS:
-        planet_response.append({
-            'id': planet.id,
-            'name': planet.name,
-            'description': planet.description,
-            'rings': planet.rings
-        })
-
+    planet_response = [vars(planet) for planet in PLANETS]
     return jsonify(planet_response)
+
+# GET ONE PLANET
+@planets_bp.route('/<id>', methods=['GET'])
+def get_one_planet(id):
+    planet = validate_planet(id)
+    return planet
+    
+# VALIDATION FUNCTION
+def validate_planet(id):
+    # handle invalid data types such as non-ints
+    try:
+        planet_id = int(id)
+    except ValueError:
+        return{
+            "message": "Invalid planet id"
+        }, 400
+    
+    # handle if id not found
+    for planet in PLANETS:
+        if planet.id == planet_id:
+            return vars(planet)
+        
+    abort(make_response(jsonify(description="Resource not found"),404))
