@@ -25,8 +25,8 @@ def create_app(test_config=None):
     # Add import for Planet
     from app.models.planet_model import Planet
 
-    from routes import planet_bp
-    app.register_blueprint(dogs_bp)    
+    from app.routes import planets_bp
+    app.register_blueprint(planets_bp)    
     
 
     return app
