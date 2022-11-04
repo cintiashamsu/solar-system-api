@@ -24,9 +24,12 @@ def create_app(test_config=None):
 
     # Add import for Planet
     from app.models.planet_model import Planet
+    from app.models.moon_model import Moon
 
-    from app.routes import planets_bp
+    from app.routes.planet_routes import planets_bp
     app.register_blueprint(planets_bp)    
+    
+    
     
 
     return app
